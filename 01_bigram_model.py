@@ -483,8 +483,8 @@ def analyze_model(model, tokenizer):
         top3 = torch.topk(probs, 3)
 
         display_char = repr(char) if char in '\n ' else f"'{char}'"
-        top_chars = [f"'{tokenizer.itos[i.item()]}' ({v:.2f})"
-                     for i, v in zip(top3.indices, top3.values)]
+        top_chars = [f"'{tokenizer.itos[i.item()]}' ({v.item():.2f})"
+                 for i, v in zip(top3.indices, top3.values)]
 
         print(f"{display_char:>8} | {top_chars[0]:>12} | {top_chars[1]:>12} | {top_chars[2]:>12}")
 

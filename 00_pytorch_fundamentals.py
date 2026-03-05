@@ -144,8 +144,8 @@ def autograd_basics():
     print(f"y = x² + 2x + 1 = {y.item()}")
 
     y.backward()  # Compute dy/dx
-
-    print(f"dy/dx = 2x + 2 = 2({x.item()}) + 2 = {x.grad.item()}")
+    
+    if x.grad is not None: print(f"dy/dx = 2x + 2 = 2({x.item()}) + 2 = {x.grad.item()}")
     # Should be 8.0 ✓
 
     # --- Why This Matters ---
@@ -161,11 +161,13 @@ def autograd_basics():
         y.backward()               # Compute gradient
 
         # Manual gradient descent (normally optimizer does this)
-        with torch.no_grad():
-            x -= learning_rate * x.grad
-            x.grad.zero_()
 
-        if step % 4 == 0:
+        with torch.no_grad(): 
+            grad = x.grad
+            assert grad is not None
+            x -= learning_rate * grad
+            grad.zero_()
+
             print(f"Step {step:2d}: x = {x.item():.4f}, loss = {y.item():.4f}")
 
     print(f"\nFinal x = {x.item():.4f} (target was 5.0)")
@@ -189,8 +191,11 @@ def autograd_basics():
     print(f"Prediction: {prediction.item():.2f}")
     print(f"Target:     {target.item():.2f}")
     print(f"Loss:       {loss.item():.2f}")
-    print(f"dL/dw:      {w.grad}")     # How much each weight contributed to error
-    print(f"dL/db:      {b.grad.item():.2f}")
+    print(f"dL/dw:      {w.grad}")
+    if b.grad is not None:
+        print(f"dL/db: {b.grad.item():.2f}")
+    else:
+        print("dL/db: No gradient computed")
 
     return True
 
@@ -394,9 +399,9 @@ def cross_entropy_deep_dive():
     loss_lm = F.cross_entropy(logits_lm.unsqueeze(0), torch.tensor([target_lm]))
 
     print(f"\n  Probabilities: {dict(zip(['a','e','h','l','o'], [f'{p:.3f}' for p in probs_lm.tolist()]))}")
-    print(f"  P('e') = {probs_lm[1]:.3f} → Loss = {loss_lm.item():.3f}")
-    print(f"\n  If model was perfect: P('e')=1.0 → Loss = -log(1) = 0")
-    print(f"  If model was random:  P('e')=0.2 → Loss = -log(0.2) = {-torch.log(torch.tensor(0.2)).item():.3f}")
+    print(f"  P('e') = {probs_lm[1]:.3f} -> Loss = {loss_lm.item():.3f}")
+    print(f"\n  If model was perfect: P('e')=1.0 -> Loss = -log(1) = 0")
+    print(f"  If model was random:  P('e')=0.2 -> Loss = -log(0.2) = {-torch.log(torch.tensor(0.2)).item():.3f}")
 
     return True
 
@@ -434,7 +439,7 @@ def concepts_quiz():
             "q": "What does nn.Embedding actually do?",
             "a": "It's a lookup table. Given integer index i, return row i of a matrix.\n"
                  "   The matrix values are learnable parameters, trained via backprop.\n"
-                 "   In LLMs, this converts token IDs → dense vectors."
+                 "   In LLMs, this converts token IDs -> dense vectors."
         },
         {
             "q": "Why can't we just use nn.Linear layers without activation functions?",
@@ -460,7 +465,7 @@ def concepts_quiz():
 # =============================================================================
 
 if __name__ == '__main__':
-    print("🔥 PYTORCH FUNDAMENTALS — Healthcare LLM Project")
+    print("*** PYTORCH FUNDAMENTALS - Healthcare LLM Project ***")
     print("=" * 60)
 
     sections = [
@@ -476,7 +481,7 @@ if __name__ == '__main__':
         func()
 
     print("\n" + "=" * 60)
-    print("✅ ALL SECTIONS COMPLETE!")
+    print("[OK] ALL SECTIONS COMPLETE!")
     print("=" * 60)
     print("""
 Next steps:
