@@ -2,7 +2,7 @@
 
 Building a healthcare-specific language model from the ground up, documenting every step.
 
-**Author:** Jathin | Senior Data Scientist | 5+ years in Healthcare Analytics at BCBS
+**Author:** Jathin | Senior Data Scientist
 
 ---
 
