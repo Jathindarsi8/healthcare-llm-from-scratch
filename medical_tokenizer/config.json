@@ -1,0 +1,6 @@
+{
+  "vocab_size": 4096,
+  "data_file": "prepared_medical_data.txt",
+  "is_hf": false,
+  "compression_ratio": 3.16969696969697
+}
